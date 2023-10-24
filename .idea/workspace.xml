@@ -23,7 +23,62 @@
   <component name="ChangeListManager">
     <list default="true" id="4d89325e-f1b7-4e4d-bb82-5ccb8ba41624" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Needleman-Wunsch-recmemo.o" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Needleman-Wunsch-recmemo.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/distanceEdition" beforeDir="false" afterPath="$PROJECT_DIR$/bin/distanceEdition" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/distanceEdition-perf" beforeDir="false" afterPath="$PROJECT_DIR$/bin/distanceEdition-perf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/Needleman-Wunsch-recmemo_8c.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/Needleman-Wunsch-recmemo_8c.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/Needleman-Wunsch-recmemo_8h.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/Needleman-Wunsch-recmemo_8h.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/Needleman-Wunsch-recmemo_8h_source.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/Needleman-Wunsch-recmemo_8h_source.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/annotated.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/annotated.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/classes.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/classes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/functions.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/functions.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/functions_vars.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/functions_vars.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/globals.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/globals.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/globals_func.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/globals_func.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_4.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_4.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_5.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_5.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_6.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_6.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_7.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_7.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_8.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_8.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_9.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_9.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_a.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_a.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_b.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_b.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_c.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_c.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/all_d.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/all_d.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/classes_0.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/classes_0.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/defines_0.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/defines_0.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/defines_1.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/defines_1.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/defines_2.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/defines_2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/defines_3.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/defines_3.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/enums_0.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/enums_0.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/enumvalues_0.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/enumvalues_0.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/enumvalues_1.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/enumvalues_1.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/enumvalues_2.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/enumvalues_2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/enumvalues_3.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/enumvalues_3.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/enumvalues_4.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/enumvalues_4.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/enumvalues_5.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/enumvalues_5.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/files_0.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/files_0.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/files_1.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/files_1.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/files_2.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/files_2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/functions_0.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/functions_0.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/functions_1.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/functions_1.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/functions_2.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/functions_2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/variables_0.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/variables_0.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/variables_1.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/variables_1.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/variables_2.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/variables_2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/html/search/variables_3.js" beforeDir="false" afterPath="$PROJECT_DIR$/doc/html/search/variables_3.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/latex/Needleman-Wunsch-recmemo_8c.tex" beforeDir="false" afterPath="$PROJECT_DIR$/doc/latex/Needleman-Wunsch-recmemo_8c.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/latex/Needleman-Wunsch-recmemo_8h.tex" beforeDir="false" afterPath="$PROJECT_DIR$/doc/latex/Needleman-Wunsch-recmemo_8h.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/latex/annotated.tex" beforeDir="false" afterPath="$PROJECT_DIR$/doc/latex/annotated.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/latex/refman.tex" beforeDir="false" afterPath="$PROJECT_DIR$/doc/latex/refman.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Needleman-Wunsch-recmemo.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/Needleman-Wunsch-recmemo.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Needleman-Wunsch-recmemo.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Needleman-Wunsch-recmemo.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/distanceEdition.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/distanceEdition.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Makefile-test" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Makefile-test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test3.output" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test3.output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test4.output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/valgrind4perf1000.output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/valgrind4perf2000.output" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,11 +151,12 @@
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CLionExternalConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Makefile Application.all">
-    <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tp-ADN-distance" TARGET_NAME="all" CONFIG_NAME="all" version="1">
+  <component name="RunManager" selected="Makefile Application.test1">
+    <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tp-ADN-distance" TARGET_NAME="test" CONFIG_NAME="test" version="1">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
@@ -135,7 +191,7 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration name="test" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tp-ADN-distance" TARGET_NAME="test" CONFIG_NAME="test" version="1">
+    <configuration name="test1" type="CLionNativeAppRunConfigurationType" PROGRAM_PARAMS="$PROJECT_DIR$/tests/enonce-seq1 0 10 $PROJECT_DIR$/tests/enonce-seq2 0 8" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tp-ADN-distance" TARGET_NAME="test1" CONFIG_NAME="test1" version="1" RUN_PATH="$PROJECT_DIR$/bin/distanceEdition">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
@@ -145,16 +201,28 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="distanceEdition.c" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tp-ADN-distance" TARGET_NAME="distanceEdition.c" CONFIG_NAME="distanceEdition.c">
+      <option name="sourceFile" value="src/distanceEdition.c" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <list>
+      <item itemvalue="C/C++ File.distanceEdition.c" />
       <item itemvalue="Makefile Application.all" />
       <item itemvalue="Makefile Application.bin" />
       <item itemvalue="Makefile Application.doc" />
       <item itemvalue="Makefile Application.report" />
       <item itemvalue="Makefile Application.binary" />
       <item itemvalue="Makefile Application.binary_perf" />
-      <item itemvalue="Makefile Application.test" />
+      <item itemvalue="Makefile Application.test1" />
       <item itemvalue="Makefile Application.test-valgrind" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="C/C++ File.distanceEdition.c" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -165,7 +233,9 @@
       <option name="presentableId" value="Default" />
       <updated>1698074107909</updated>
       <workItem from="1698074113196" duration="738000" />
-      <workItem from="1698141215644" duration="100000" />
+      <workItem from="1698141215644" duration="3350000" />
+      <workItem from="1698165460830" duration="12798000" />
+      <workItem from="1698187878118" duration="3211000" />
     </task>
     <servers />
   </component>

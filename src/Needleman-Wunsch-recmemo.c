@@ -39,6 +39,20 @@ struct NW_MemoContext
     long **memo; /*!< memoization table to store memo[0..M][0..N] (including stopping conditions phi(M,j) and phi(i,N) */
 } ;
 
+/** \struct NW_MemoIter
+ * \brief data for memoization of recursive Needleman-Wunsch algorithm
+*/
+struct NW_MemoIter
+{
+    char *X ; /*!< the longest genetic sequences */
+    char *Y ; /*!< the shortest genetic sequences */
+    size_t M; /*!< length of X */
+    size_t N; /*!< length of Y,  N <= M */
+    long *memoA;
+    long *memoB;
+} ;
+
+
 /*
  *  static long EditDistance_NW_RecMemo(struct NW_MemoContext *c, size_t i, size_t j) 
  * \brief  EditDistance_NW_RecMemo :  Private (static)  recursive function with memoization \
@@ -135,5 +149,83 @@ long EditDistance_NW_Rec(char* A, size_t lengthA, char* B, size_t lengthB)
       free( ctx.memo ) ;
    }
    return res ;
+}
+
+/* EditDistance_NW_Iter:  is the main function to call, cf .h for specification
+ * It allocates and initailizes data (NW_MemoContext) for memoization and call the
+ * recursivefunction EditDistance_NW_RecMemo
+ * See .h file for documentation
+ */
+long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
+{
+    char Xi, Yj;
+    long prevCalc, res;
+
+    _init_base_match() ;
+    struct NW_MemoIter ctx;
+    if (lengthA >= lengthB) /* X is the longest sequence, Y the shortest */
+    {  ctx.X = A ;
+        ctx.M = lengthA ;
+        ctx.Y = B ;
+        ctx.N = lengthB ;
+    }
+    else
+    {  ctx.X = B ;
+        ctx.M = lengthB ;
+        ctx.Y = A ;
+        ctx.N = lengthA ;
+    }
+    size_t M = ctx.M ;
+    size_t N = ctx.N ;
+    ctx.memoA = malloc((M + 1) * sizeof(long));
+    if (ctx.memoA == NULL) { perror("EditDistance_NW_Rec: malloc of ctx_memoA" ); exit(EXIT_FAILURE); }
+    ctx.memoB = malloc((N + 1) * sizeof(long));
+    if (ctx.memoB == NULL) { perror("EditDistance_NW_Rec: malloc of ctx_memB" ); exit(EXIT_FAILURE);}
+
+    ctx.memoA[M] = 0;
+    ctx.memoB[N] = 0;
+    for (int i = M - 1; i >= 0; i--)
+    {
+        // Pour j = N
+        Xi = ctx.X[i];
+        ctx.memoA[i] = (isBase(Xi) ? INSERTION_COST: 0) + ctx.memoA[i + 1];
+    }
+
+    for (int j = N - 1; j >= 0; j--)
+    {
+        Yj = B[j];
+        ctx.memoB[j] = (isBase(Yj) ? INSERTION_COST: 0) + ctx.memoB[j + 1];
+    }
+
+    for (int j = N - 1; j >= 0; j--)
+    {
+        Yj = ctx.Y[j];
+        prevCalc = ctx.memoB[j];
+        for (int i = M - 1; i >= 0; i--)
+        {
+            Xi = ctx.X[i];
+            long min = /* initialization  with cas 1*/
+                    (isUnknownBase(Xi) ? SUBSTITUTION_UNKNOWN_COST
+                                       : (isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST)
+                    )
+                    + ctx.memoA[i + 1];
+            {
+                long cas2 = INSERTION_COST + prevCalc;
+                if (cas2 < min) min = cas2;
+            }
+            {
+                long cas3 = INSERTION_COST + ctx.memoA[i];
+                if (cas3 < min) min = cas3;
+            }
+            ctx.memoA[i + 1] = prevCalc;
+            prevCalc = min;
+        }
+        ctx.memoA[0] = prevCalc;
+    }
+    res = ctx.memoA[0];
+    free(ctx.memoA);
+    free(ctx.memoB);
+
+    return res;
 }
 
