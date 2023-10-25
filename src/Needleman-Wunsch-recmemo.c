@@ -169,12 +169,14 @@ long computeCost(struct NW_MemoIter ctx, int i, int j)
     Yj = ctx.Y[j];
     if (!isBase(Xi))  /* skip character in Xi that is not a base */
     {
-        ManageBaseError( Xi ) ;
-        res = ctx.memoB[j] ;
+        ManageBaseError( Xi );
+        /* phi(i + 1, j) */
+        res = ctx.memoB[j];
     }
     else if (! isBase(Yj))  /* skip ccharacter in Yj that is not a base */
-    {  ManageBaseError( Yj ) ;
-        res = ctx.memoB[j + 1] ;
+    {  ManageBaseError( Yj );
+        /* phi(i, j + 1) */
+        res = ctx.memoB[j + 1];
     }
     else
     {  /* Note that stopping conditions (i==M) and (j==N) are already stored in c->memo (cf EditDistance_NW_Rec) */
@@ -182,7 +184,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j)
                 ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
                                     : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
                 )
-                + ctx.memoA[i + 1];
+                + /* ph(i + 1, j + 1) */ ctx.memoA[i + 1];
         { long cas2 = INSERTION_COST + ctx.memoB[j] ;
             if (cas2 < min) min = cas2 ;
         }
@@ -243,7 +245,7 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
 
     /* We define the variables to use in the function */
     char Xi, Yj; /* To store characters from the sequence x (resp. Y) */
-    long prevCalc, res; /* To store tmp calculations (resp. final result) */
+    long res; /* To store final result */
     size_t M, N; /* M (resp. N) is the size of X (resp. Y) */
 
     /* We initiate the X and Y sequences,
@@ -286,8 +288,8 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
         for (int j = N - 1; j >= 0; j--)
         {
             long min = computeCost(ctx, i, j);
-            ctx.memoA[i + 1] = ctx.memoB[j];
-            ctx.memoB[j] = min;
+            ctx.memoA[i + 1] = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
+            ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
         }
     }
 
