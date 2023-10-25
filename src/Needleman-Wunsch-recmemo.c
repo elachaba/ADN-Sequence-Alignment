@@ -151,19 +151,66 @@ long EditDistance_NW_Rec(char* A, size_t lengthA, char* B, size_t lengthB)
    return res ;
 }
 
-/* EditDistance_NW_Iter:  is the main function to call, cf .h for specification
- * It allocates and initailizes data (NW_MemoContext) for memoization and call the
- * recursivefunction EditDistance_NW_RecMemo
- * See .h file for documentation
+/**
+ * computeCost - computes the cost of aligning two characters from a sequence
+ * when i < M and j < N
+ * @param ctx holds the information about the sequences
+ * @param i  the index of the character in sequence X
+ * @param j the index of the character in the sequence Y
+ * @return The cost of aligning Xi and Yj
  */
-long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
+
+long computeCost(struct NW_MemoIter ctx, int i, int j)
 {
     char Xi, Yj;
-    long prevCalc, res;
+    long res;
 
-    _init_base_match() ;
+    Xi = ctx.X[i];
+    Yj = ctx.Y[j];
+    if (!isBase(Xi))  /* skip character in Xi that is not a base */
+    {
+        ManageBaseError( Xi ) ;
+        res = ctx.memoB[j] ;
+    }
+    else if (! isBase(Yj))  /* skip ccharacter in Yj that is not a base */
+    {  ManageBaseError( Yj ) ;
+        res = ctx.memoB[j + 1] ;
+    }
+    else
+    {  /* Note that stopping conditions (i==M) and (j==N) are already stored in c->memo (cf EditDistance_NW_Rec) */
+        long min = /* initialization  with cas 1*/
+                ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
+                                    : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
+                )
+                + ctx.memoA[i + 1];
+        { long cas2 = INSERTION_COST + ctx.memoB[j] ;
+            if (cas2 < min) min = cas2 ;
+        }
+        { long cas3 = INSERTION_COST + ctx.memoB[j + 1] ;
+            if (cas3 < min) min = cas3 ;
+        }
+        res = min ;
+    }
+
+    return (res);
+
+}
+
+/**
+ * initSequence - initialises the the sequences X and Y
+ * The sequence X is always longer the the sequence Y
+ * @param A The sequence from the first file
+ * @param lengthA
+ * @param B The sequence from the second file
+ * @param lengthB
+ * @return NW_MemoIter where we store all the info about the
+ * sequences
+ */
+
+struct NW_MemoIter initSequences(char *A, size_t lengthA, char *B, size_t lengthB)
+{
     struct NW_MemoIter ctx;
-    if (lengthA >= lengthB) /* X is the longest sequence, Y the shortest */
+    if (lengthA >= lengthB)
     {  ctx.X = A ;
         ctx.M = lengthA ;
         ctx.Y = B ;
@@ -175,10 +222,43 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
         ctx.Y = A ;
         ctx.N = lengthA ;
     }
-    size_t M = ctx.M ;
-    size_t N = ctx.N ;
+    return (ctx);
+}
+
+/**
+ * EditDistance_NW_Iter:  is the main function to call, cf .h for specification
+ * It allocates and initailizes data (NW_MemoContext) for memoization and call the
+ * recursivefunction EditDistance_NW_RecMemo
+ * See .h file for documentation
+ * @param A The sequence from the first file
+ * @param lengthA
+ * @param B the sequence from the second file
+ * @param lengthB
+ * @return return the Edition Distance between the sequences A and B
+ */
+
+long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
+{
+    _init_base_match() ;
+
+    /* We define the variables to use in the function */
+    char Xi, Yj; /* To store characters from the sequence x (resp. Y) */
+    long prevCalc, res; /* To store tmp calculations (resp. final result) */
+    size_t M, N; /* M (resp. N) is the size of X (resp. Y) */
+
+    /* We initiate the X and Y sequences,
+     * X is the longest sequence, Y the shortest
+     */
+
+    struct NW_MemoIter ctx = initSequences(A, lengthA, B, lengthB);
+
+    M = ctx.M ;
+    N = ctx.N ;
+
+    /* memoA will be used to store the lines calculated from the phi matrix */
     ctx.memoA = malloc((M + 1) * sizeof(long));
     if (ctx.memoA == NULL) { perror("EditDistance_NW_Rec: malloc of ctx_memoA" ); exit(EXIT_FAILURE); }
+    /* memoB will be used to store the first column by setting i to M */
     ctx.memoB = malloc((N + 1) * sizeof(long));
     if (ctx.memoB == NULL) { perror("EditDistance_NW_Rec: malloc of ctx_memB" ); exit(EXIT_FAILURE);}
 
@@ -197,32 +277,21 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
         ctx.memoB[j] = (isBase(Yj) ? INSERTION_COST: 0) + ctx.memoB[j + 1];
     }
 
-    for (int j = N - 1; j >= 0; j--)
+    /* We proceed by computing columns, and storing the new column in the last one
+     * only the last updated column is needed to create the next column, which costs only O(m).
+     */
+    for (int i = M - 1; i >= 0; i--)
     {
-        Yj = ctx.Y[j];
-        prevCalc = ctx.memoB[j];
-        for (int i = M - 1; i >= 0; i--)
+        ctx.memoB[N] = ctx.memoA[i];
+        for (int j = N - 1; j >= 0; j--)
         {
-            Xi = ctx.X[i];
-            long min = /* initialization  with cas 1*/
-                    (isUnknownBase(Xi) ? SUBSTITUTION_UNKNOWN_COST
-                                       : (isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST)
-                    )
-                    + ctx.memoA[i + 1];
-            {
-                long cas2 = INSERTION_COST + prevCalc;
-                if (cas2 < min) min = cas2;
-            }
-            {
-                long cas3 = INSERTION_COST + ctx.memoA[i];
-                if (cas3 < min) min = cas3;
-            }
-            ctx.memoA[i + 1] = prevCalc;
-            prevCalc = min;
+            long min = computeCost(ctx, i, j);
+            ctx.memoA[i + 1] = ctx.memoB[j];
+            ctx.memoB[j] = min;
         }
-        ctx.memoA[0] = prevCalc;
     }
-    res = ctx.memoA[0];
+
+    res = ctx.memoB[0];
     free(ctx.memoA);
     free(ctx.memoB);
 
