@@ -23,9 +23,11 @@
   <component name="ChangeListManager">
     <list default="true" id="4d89325e-f1b7-4e4d-bb82-5ccb8ba41624" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Needleman-Wunsch-recmemo.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/Needleman-Wunsch-recmemo.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Makefile-test" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Makefile-test" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test3.output" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test3.output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test1.output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test2.output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test3.output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test4.output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test5.output" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +185,7 @@
       <workItem from="1698074113196" duration="738000" />
       <workItem from="1698141215644" duration="3350000" />
       <workItem from="1698165460830" duration="12798000" />
-      <workItem from="1698187878118" duration="13125000" />
+      <workItem from="1698187878118" duration="14619000" />
     </task>
     <servers />
   </component>
