@@ -12,6 +12,7 @@ BINDIR=$(REFDIR)/bin
 DOCDIR=$(REFDIR)/doc
 TESTDIR=$(REFDIR)/tests
 REPORTDIR=$(REFDIR)/report
+CURRTEST = Needleman-Wunsch-itermemo.o
 
 LATEXSOURCE=$(wildcard $(REPORTDIR)/*.tex)
 CSOURCE=$(wildcard $(SRCDIR)/*.c)
@@ -23,19 +24,22 @@ binary: $(BINDIR)/distanceEdition
 
 binary_perf: $(BINDIR)/distanceEdition-perf
 
-$(BINDIR)/distanceEdition-perf: $(SRCDIR)/distanceEdition.c $(BINDIR)/Needleman-Wunsch-recmemo.o
-	$(CC) $(OPT) -D__PERF_MESURE__ -I$(SRCDIR) -o $(BINDIR)/distanceEdition-perf $(BINDIR)/Needleman-Wunsch-recmemo.o $(SRCDIR)/distanceEdition.c 
+$(BINDIR)/distanceEdition-perf: $(SRCDIR)/distanceEdition.c $(BINDIR)/$(CURRTEST)
+	$(CC) $(OPT) -D__PERF_MESURE__ -I$(SRCDIR) -o $(BINDIR)/distanceEdition-perf $(BINDIR)/$(CURRTEST) $(SRCDIR)/distanceEdition.c
 
 report: $(PDF) 
 
 doc: $(DOCDIR)/index.html
 
 
-$(BINDIR)/distanceEdition: $(SRCDIR)/distanceEdition.c $(BINDIR)/Needleman-Wunsch-recmemo.o
-	$(CC) $(OPT) -I$(SRCDIR) -o $(BINDIR)/distanceEdition $(BINDIR)/Needleman-Wunsch-recmemo.o $(SRCDIR)/distanceEdition.c 
+$(BINDIR)/distanceEdition: $(SRCDIR)/distanceEdition.c $(BINDIR)/$(CURRTEST)
+	$(CC) $(OPT) -I$(SRCDIR) -o $(BINDIR)/distanceEdition $(BINDIR)/$(CURRTEST) $(SRCDIR)/distanceEdition.c
 
 $(BINDIR)/Needleman-Wunsch-recmemo.o: $(SRCDIR)/Needleman-Wunsch-recmemo.h $(SRCDIR)/Needleman-Wunsch-recmemo.c $(SRCDIR)/characters_to_base.h
 	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-recmemo.o $(SRCDIR)/Needleman-Wunsch-recmemo.c
+
+$(BINDIR)/Needleman-Wunsch-itermemo.o: $(SRCDIR)/Needleman-Wunsch-itermemo.h $(SRCDIR)/Needleman-Wunsch-itermemo.c $(SRCDIR)/characters_to_base.h
+	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-itermemo.o $(SRCDIR)/Needleman-Wunsch-itermemo.c
 	
 $(BINDIR)/extract-fasta-sequences-size: $(SRCDIR)/extract-fasta-sequences-size.c
 	$(CC) $(OPT) -I$(SRCDIR) -o $(BINDIR)/extract-fasta-sequences-size $(SRCDIR)/extract-fasta-sequences-size.c
