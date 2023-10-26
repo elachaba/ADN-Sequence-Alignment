@@ -23,11 +23,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4d89325e-f1b7-4e4d-bb82-5ccb8ba41624" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test1.output" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test2.output" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test3.output" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test4.output" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test5.output" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,11 +140,6 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="distanceEdition.c" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" PROGRAM_PARAMS="tests/enonce-seq1 0 10 tests/enonce-seq2 0 8" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tp-ADN-distance" TARGET_NAME="distanceEdition.c" CONFIG_NAME="distanceEdition.c">
       <option name="compilerOptions" value="-g -Wall -D__PERF_MESURE__ -I./src" />
       <option name="sourceFile" value="src/distanceEdition.c" />
@@ -185,7 +175,8 @@
       <workItem from="1698074113196" duration="738000" />
       <workItem from="1698141215644" duration="3350000" />
       <workItem from="1698165460830" duration="12798000" />
-      <workItem from="1698187878118" duration="14619000" />
+      <workItem from="1698187878118" duration="16483000" />
+      <workItem from="1698247150393" duration="1166000" />
     </task>
     <servers />
   </component>
