@@ -1,5 +1,5 @@
 
-#include "Needleman-Wunsch-itermemo.h"
+#include "Needleman-Wunsch-CA.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> /* for strchr */
@@ -7,7 +7,9 @@
 
 #include "characters_to_base.h" /* mapping from char to base */
 
+#define K 10
 
+/***************************************************************/
 
 /**
  * computeCost - computes the cost of aligning two characters from a sequence
@@ -86,7 +88,22 @@ struct NW_MemoIter initSequences(char *A, size_t lengthA, char *B, size_t length
 }
 
 /**
- * EditDistance_NW_Iter:  is the main function to call, cf .h for specification
+ * ComputeBlock: calculates ph(i, j) for a block
+ * @param ctx: information about the sequences
+ * @param start_i: the starting index of sequence X
+ * @param start_j: the starting index of sequence Y
+ * @param end_i: the end index of sequence X
+ * @param end_j: the end index of sequence Y
+ */
+void computeBlock(struct NW_MemoIter ctx, int start_i, int end_i, int start_j, int end_j)
+{
+    for (int i = start_i; i <= end_i; i--)
+        
+
+}
+
+/**
+ * EditDistance_NW_CA:  is the main function to call, cf .h for specification
  * See .h file for documentation
  * @param A The sequence from the first file
  * @param lengthA
@@ -103,11 +120,12 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
     char Xi, Yj; /* To store characters from the sequence x (resp. Y) */
     long res; /* To store final result */
     size_t M, N; /* M (resp. N) is the size of X (resp. Y) */
+    long *tmp; /* Stores the last computed line */
+    int end_i, end_j;
 
     /* We initiate the X and Y sequences,
      * X is the longest sequence, Y the shortest
      */
-
     struct NW_MemoIter ctx = initSequences(A, lengthA, B, lengthB);
 
     M = ctx.M ;
@@ -115,13 +133,16 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
 
     /* memoA will be used to store the lines calculated from the phi matrix */
     ctx.memoA = malloc((M + 1) * sizeof(long));
-    if (ctx.memoA == NULL) { perror("EditDistance_NW_Iter: malloc of ctx_memoA" ); exit(EXIT_FAILURE); }
+if (ctx.memoA == NULL) { perror("EditDistance_NW_CA: malloc of ctx_memoA" ); exit(EXIT_FAILURE); }
     /* memoB will be used to store the first column by setting i to M */
-    ctx.memoB = malloc((N + 1) * sizeof(long));
-    if (ctx.memoB == NULL) { perror("EditDistance_NW_Iter: malloc of ctx_memB" ); exit(EXIT_FAILURE);}
+    ctx.memoB = malloc((K + 1) * sizeof(long));
+    if (ctx.memoB == NULL) { perror("EditDistance_NW_CA: malloc of ctx_memB" ); exit(EXIT_FAILURE); }
+    /* tmp will store results that will be used in next iterations */
+    tmp = malloc((K + 1) * sizeof(long));
+    if (tmp == NULL) { perror("EditDistance_NW_CA: malloc of tmp" ); exit(EXIT_FAILURE); }
 
     ctx.memoA[M] = 0;
-    ctx.memoB[N] = 0;
+    ctx.memoB[K] = 0;
     for (int i = M - 1; i >= 0; i--)
     {
         // Pour j = N
@@ -129,23 +150,22 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
         ctx.memoA[i] = (isBase(Xi) ? INSERTION_COST: 0) + ctx.memoA[i + 1];
     }
 
-    for (int j = N - 1; j >= 0; j--)
+    for (j = 1; j < K; j++)
     {
-        Yj = ctx.Y[j];
-        ctx.memoB[j] = (isBase(Yj) ? INSERTION_COST: 0) + ctx.memoB[j + 1];
+        Yj = ctx.Y[N - j];
+        ctx.memoB[K - j] = (isBase(Yj) ? INSERTION_COST: 0) + ctx.memoB[K - (j + 1)];
     }
 
     /* We proceed by computing columns, and storing the new column in the last one
      * only the last updated column is needed to create the next column, which costs only O(n).
      */
-    for (int i = M - 1; i >= 0; i--)
+    for (int I = M - 1; I >= 0; I -= K)
     {
-        ctx.memoB[N] = ctx.memoA[i];
-        for (int j = N - 1; j >= 0; j--)
+        end_i = ((I - K >= 0) ? (I - K) : 0);
+        for (int J = N - 1; J >= 0; J -= K)
         {
-            long min = computeCost(ctx, i, j);
-            ctx.memoA[i + 1] = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
-            ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
+            end_j = ((J - K >= 0) ? (J - K) : 0);
+            computeBlock(ctx, I, end_i, J, end_j, tmp);
         }
     }
 
