@@ -44,7 +44,7 @@ EXAMPLE
  * \brief Primitives pour mapper en mémoire virtuelle une sous-séquence d'un fichier de caractères
  */
 
-#include "Needleman-Wunsch-recmemo.h" // Recursive implementation of NeedlemanWunsch with memoization
+#include "Needleman-Wunsch-itermemo.h" // Recursive implementation of NeedlemanWunsch with memoization
 
 #include <stdio.h>  
 #include <stdlib.h> 
