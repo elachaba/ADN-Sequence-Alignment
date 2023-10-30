@@ -18,7 +18,7 @@
  * @return The cost of aligning Xi and Yj
  */
 
-long computeCost(struct NW_MemoIter ctx, int i, int j)
+long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp)
 {
     char Xi, Yj;
     long res;
@@ -42,7 +42,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j)
                 ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
                                     : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
                 )
-                + /* ph(i + 1, j + 1) */ ctx.memoA[i + 1];
+                + /* ph(i + 1, j + 1) */ /*ctx.memoA[i + 1]*/ tmp;
         { long cas2 = INSERTION_COST + ctx.memoB[j] ;
             if (cas2 < min) min = cas2 ;
         }
@@ -101,7 +101,7 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
 
     /* We define the variables to use in the function */
     char Xi, Yj; /* To store characters from the sequence x (resp. Y) */
-    long res, min; /* To store final result */
+    long res, min, tmp; /* To store final result */
     size_t M, N; /* M (resp. N) is the size of X (resp. Y) */
 
     /* We initiate the X and Y sequences,
@@ -114,41 +114,53 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
     N = ctx.N ;
 
     /* memoA will be used to store the lines calculated from the phi matrix */
-    ctx.memoA = malloc((M + 1) * sizeof(long));
-    if (ctx.memoB == NULL) { perror("EditDistance_NW_Iter: malloc of ctx_memoA"); exit(EXIT_FAILURE); }
+
     ctx.memoB = malloc((N + 1) * sizeof(long));
     if (ctx.memoB == NULL) { perror("EditDistance_NW_Iter: malloc of ctx_memB" ); exit(EXIT_FAILURE); }
+/*    ctx.memoA = malloc((M + 1) * sizeof(long));
+    if (ctx.memoA == NULL) { perror("EditionDistance_NW_Iter: malloc ctx_memoA"); exit(EXIT_FAILURE); }*/
 
-    ctx.memoA[M] = 0;
     ctx.memoB[N] = 0;
+/*    ctx.memoA[M] = 0;*/
 
-    for (int i = M - 1; i >= 0; i--)
+
+    for (int j = N - 1; j >= 0; j--)
+    {
+
+        Yj = ctx.Y[j];
+        ctx.memoB[j] = (isBase(Yj) ? INSERTION_COST : 0) + ctx.memoB[j + 1];
+    }
+/*    for (int i = M - 1; i >= 0; i--)
     {
         Xi = ctx.X[i];
         ctx.memoA[i] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoA[i + 1];
-    }
-    for (int j = N - 1; j >= 0; j--)
-    {
-        Yj = ctx.Y[j];
-        ctx.memoB[j] = (isBase(Yj) ? INSERTION_COST: 0) + ctx.memoB[j + 1];
-    }
+    }*/
 
     /* We proceed by computing columns, and storing the new column in the last one
      * only the last updated column is needed to create the next column, which costs only O(n).
      */
     for (int i = M - 1; i >= 0; i--)
     {
-        ctx.memoB[N] = ctx.memoA[i];
-        for (int j = N - 1; j >= 0; j--)
+        tmp = ctx.memoB[N];
+        /*ctx.memoB[N] = ctx.memoA[i];*/
+        for (int j = N; j >= 0; j--)
         {
-            min = computeCost(ctx, i, j);
-            ctx.memoA[i + 1] = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
+            if (j == N)
+            {
+                Xi = ctx.X[i];
+                ctx.memoB[j] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoB[j];
+                continue;
+            }
+            min = computeCost(ctx, i, j, tmp);
+            tmp = ctx.memoB[j];
+            /*ctx.memoA[i + 1] = ctx.memoB[j];*/ /* Update the value of phi(i + 1, j + 1), i is fixed. */
             ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
         }
     }
 
     res = ctx.memoB[0];
     free(ctx.memoB);
+    /*free(ctx.memoA);*/
 
     return res;
 }
