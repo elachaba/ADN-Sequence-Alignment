@@ -7,7 +7,7 @@
 
 #include "characters_to_base.h" /* mapping from char to base */
 
-#define K 64
+#define S 254
 
 
 
@@ -20,7 +20,7 @@
  * @return The cost of aligning Xi and Yj
  */
 
-long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp, bool useTmp)
+long computeCost(struct NW_MemoIter ctx, int i, int j)
 {
     char Xi, Yj;
     long res;
@@ -36,7 +36,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp, bool useTmp)
     else if (! isBase(Yj))  /* skip ccharacter in Yj that is not a base */
     {  ManageBaseError( Yj );
         /* phi(i, j + 1) */
-        res = (useTmp ? tmp : ctx.memoB[j + 1]);
+        res = ctx.memoB[j + 1];
     }
     else
     {  /* Note that stopping conditions (i==M) and (j==N) are already stored in c->memo (cf EditDistance_NW_Rec) */
@@ -44,11 +44,11 @@ long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp, bool useTmp)
                 ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
                                     : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
                 )
-                + /* ph(i + 1, j + 1) */ ctx.memoA[i + 1];
+                + /* ph(i + 1, j + 1) */ ctx.memoA[ctx.M];
         { long cas2 = INSERTION_COST + ctx.memoB[j] ;
             if (cas2 < min) min = cas2 ;
         }
-        { long cas3 = INSERTION_COST + (useTmp ? tmp : ctx.memoB[j + 1]) ;
+        { long cas3 = INSERTION_COST + ctx.memoB[j + 1];
             if (cas3 < min) min = cas3 ;
         }
         res = min ;
@@ -88,32 +88,65 @@ struct NW_MemoIter initSequences(char *A, size_t lengthA, char *B, size_t length
 }
 
 /**
- *
+ * computeBlock: Computes the value of a block of the ph(i, j) matrix
+ * @param ctx A variable storing the information about the sequences
+ * @param tmp The last block line computed
+ * @param begin_i the starting index in the sequence X
+ * @param end_i the ending index in the sequence X
+ * @param begin_j the starting index in the sequence Y
+ * @param end_j the ending index in the sequence Y
  */
-void computeBlock(struct NW_MemoIter ctx, long *tmp, int begin_i, int end_i, int begin_j, int end_j)
+
+void computeBlock(struct NW_MemoIter ctx, int begin_i, int end_i, int begin_j, int end_j)
 {
     long min;
-    if (begin_j == ctx.N - 1)
-    {
-        for (int i = begin_i; i > end_i; i--)
-        {
-            tmp[K - (begin_i - i) - 1] = ctx.memoA[i];
-        }
-    }
+    if (end_i == 0)
+        end_i = -1;
+    if (end_j == 0)
+        end_j = -1;
     for (int i = begin_i; i > end_i; i--)
     {
         for (int j = begin_j; j > end_j; j--)
         {
-            if (j == begin_j)
-                min = computeCost(ctx, i, j, tmp[K - (begin_i - i) - 1], true);
-            else
-                min = computeCost(ctx, i, j, 0, false);
-            ctx.memoA[i + 1] = ctx.memoB[j];
-            ctx.memoB[j] = min;
+            min = computeCost(ctx, i, j);
+            ctx.memoA[ctx.M] = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
+            ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
         }
-        tmp[K - (begin_i - i) - 1] = min;
+        ctx.memoA[i] = ctx.memoB[end_j + 1];
     }
 }
+
+/**
+ * EditDistance_NW_Rec_CO: calculates recursively the values of the matrix
+ * of phi(i, j)
+ * @param ctx A variable storing the information about the sequences
+ * @param begin_i the starting index in the sequence X
+ * @param end_i the ending index in the sequence X
+ * @param begin_j the starting index in the sequence Y
+ * @param end_j the ending sequence index in the sequence Y
+ */
+
+void EditDistance_NW_Rec_CO(struct NW_MemoIter ctx, int begin_i, int end_i, int begin_j, int end_j)
+{
+    int ni = begin_i - end_i, nj = begin_j - end_j;
+
+    if ((ni <= S) && (nj <= S))
+        computeBlock(ctx, begin_i, end_i, begin_j, end_j);
+    else
+    {
+        if (ni > nj)
+        {
+            EditDistance_NW_Rec_CO(ctx, begin_i, begin_i / 2, begin_j, end_j);
+            EditDistance_NW_Rec_CO(ctx, begin_i / 2, end_i, begin_j, end_j);
+        }
+        else
+        {
+            EditDistance_NW_Rec_CO(ctx, begin_i, end_i, begin_j, begin_j / 2);
+            EditDistance_NW_Rec_CO(ctx, begin_i, end_i, begin_j / 2, end_j);
+        }
+    }
+}
+
 
 /**
  * EditDistance_NW_CA:  is the main function to call, cf .h for specification
@@ -125,15 +158,13 @@ void computeBlock(struct NW_MemoIter ctx, long *tmp, int begin_i, int end_i, int
  * @return return the Edition Distance between the sequences A and B
  */
 
-long EditDistance_NW_CA(char *A, size_t lengthA, char *B, size_t lengthB)
+long EditDistance_NW_CO(char *A, size_t lengthA, char *B, size_t lengthB)
 {
     _init_base_match();
 
     char Xi, Yj;
     long res;
     size_t M, N;
-    int end_i, end_j;
-    long *tmp;
     struct NW_MemoIter ctx = initSequences(A, lengthA, B, lengthB);
 
     M = ctx.M;
@@ -142,9 +173,8 @@ long EditDistance_NW_CA(char *A, size_t lengthA, char *B, size_t lengthB)
     ctx.memoA = malloc((M + 1) * sizeof(long));
     if (ctx.memoA == NULL) { perror("EditDistance_NW_CA: malloc of memoA failed!\n"); exit(EXIT_FAILURE); }
     ctx.memoB = malloc((N + 1) * sizeof(long));
-    if (ctx.memoB == NULL) { perror("EditDistance_NW_CA: malloc of memoB failed!\n"); exit(EXIT_FAILURE); }
-    tmp = malloc(K * sizeof(long));
-    if (tmp == NULL) { perror("EditDistance_NW_CA: malloc of tmp\n"); exit(EXIT_FAILURE); }
+    if (ctx.memoA == NULL) { perror("EditDistance_NW_CA: malloc of memoB failed!\n"); exit(EXIT_FAILURE); }
+
 
     ctx.memoA[M] = 0;
     ctx.memoB[N] = 0;
@@ -159,19 +189,10 @@ long EditDistance_NW_CA(char *A, size_t lengthA, char *B, size_t lengthB)
         ctx.memoB[j] = ((isBase(Yj) ? INSERTION_COST : 0)) + ctx.memoB[j + 1];
     }
 
-    for (int I = M - 1; I >= 0; I -= K)
-    {
-        end_i = ((I - K) > 0 ? I - K : -1);
-        for (int J = N - 1; J >= 0; J -= K)
-        {
-            end_j = ((J - K) > 0 ? J - K: -1);
-            computeBlock(ctx, tmp, I, end_i, J, end_j);
-        }
-    }
+    EditDistance_NW_Rec_CO(ctx, M - 1, 0, N - 1, 0);
     res = ctx.memoB[0];
     free(ctx.memoB);
     free(ctx.memoA);
-    free(tmp);
 
     return (res);
 }

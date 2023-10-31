@@ -117,12 +117,8 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
 
     ctx.memoB = malloc((N + 1) * sizeof(long));
     if (ctx.memoB == NULL) { perror("EditDistance_NW_Iter: malloc of ctx_memB" ); exit(EXIT_FAILURE); }
-/*    ctx.memoA = malloc((M + 1) * sizeof(long));
-    if (ctx.memoA == NULL) { perror("EditionDistance_NW_Iter: malloc ctx_memoA"); exit(EXIT_FAILURE); }*/
 
     ctx.memoB[N] = 0;
-/*    ctx.memoA[M] = 0;*/
-
 
     for (int j = N - 1; j >= 0; j--)
     {
@@ -130,11 +126,6 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
         Yj = ctx.Y[j];
         ctx.memoB[j] = (isBase(Yj) ? INSERTION_COST : 0) + ctx.memoB[j + 1];
     }
-/*    for (int i = M - 1; i >= 0; i--)
-    {
-        Xi = ctx.X[i];
-        ctx.memoA[i] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoA[i + 1];
-    }*/
 
     /* We proceed by computing columns, and storing the new column in the last one
      * only the last updated column is needed to create the next column, which costs only O(n).
@@ -145,22 +136,46 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
         /*ctx.memoB[N] = ctx.memoA[i];*/
         for (int j = N; j >= 0; j--)
         {
-            if (j == N)
+            if (j   == N)
             {
                 Xi = ctx.X[i];
                 ctx.memoB[j] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoB[j];
                 continue;
             }
-            min = computeCost(ctx, i, j, tmp);
-            tmp = ctx.memoB[j];
-            /*ctx.memoA[i + 1] = ctx.memoB[j];*/ /* Update the value of phi(i + 1, j + 1), i is fixed. */
+            Xi = ctx.X[i];
+            Yj = ctx.Y[j];
+            if (!isBase(Xi))  /* skip character in Xi that is not a base */
+            {
+                ManageBaseError( Xi );
+                /* phi(i + 1, j) */
+                res = ctx.memoB[j];
+            }
+            else if (! isBase(Yj))  /* skip ccharacter in Yj that is not a base */
+            {  ManageBaseError( Yj );
+                /* phi(i, j + 1) */
+                res = ctx.memoB[j + 1];
+            }
+            else
+            {  /* Note that stopping conditions (i==M) and (j==N) are already stored in c->memo (cf EditDistance_NW_Rec) */
+                min = /* initialization  with cas 1*/
+                        ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
+                                            : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
+                        )
+                        + /* ph(i + 1, j + 1) */ /*ctx.memoA[i + 1]*/ tmp;
+                { long cas2 = INSERTION_COST + ctx.memoB[j] ;
+                    if (cas2 < min) min = cas2 ;
+                }
+                { long cas3 = INSERTION_COST + ctx.memoB[j + 1] ;
+                    if (cas3 < min) min = cas3 ;
+                }
+            }
+            tmp = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
             ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
         }
     }
 
     res = ctx.memoB[0];
     free(ctx.memoB);
-    /*free(ctx.memoA);*/
 
     return res;
 }
