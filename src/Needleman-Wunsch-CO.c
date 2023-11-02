@@ -7,7 +7,7 @@
 
 #include "characters_to_base.h" /* mapping from char to base */
 
-#define S 64
+#define S 200
 
 
 
@@ -20,7 +20,7 @@
  * @return The cost of aligning Xi and Yj
  */
 
-long computeCost(struct NW_MemoIter ctx, int i, int j)
+long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp, bool useTmp)
 {
     char Xi, Yj;
     long res;
@@ -36,7 +36,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j)
     else if (! isBase(Yj))  /* skip ccharacter in Yj that is not a base */
     {  ManageBaseError( Yj );
         /* phi(i, j + 1) */
-        res = ctx.memoB[j + 1];
+        res = (useTmp ? tmp : ctx.memoB[j + 1]);
     }
     else
     {  /* Note that stopping conditions (i==M) and (j==N) are already stored in c->memo (cf EditDistance_NW_Rec) */
@@ -48,7 +48,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j)
         { long cas2 = INSERTION_COST + ctx.memoB[j] ;
             if (cas2 < min) min = cas2 ;
         }
-        { long cas3 = INSERTION_COST + ctx.memoB[j + 1];
+        { long cas3 = INSERTION_COST + (useTmp ? tmp : ctx.memoB[j + 1]) ;
             if (cas3 < min) min = cas3 ;
         }
         res = min ;
@@ -57,6 +57,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j)
     return (res);
 
 }
+
 
 /**
  * initSequence - initialises the the sequences X and Y
@@ -97,13 +98,23 @@ struct NW_MemoIter initSequences(char *A, size_t lengthA, char *B, size_t length
  * @param end_j the ending index in the sequence Y
  */
 
-void computeBlock(struct NW_MemoIter ctx, int begin_i, int end_i, int begin_j, int end_j)
+void computeBlock(struct NW_MemoIter ctx, long *tmp, int begin_i, int end_i, int begin_j, int end_j)
 {
     long min;
-    end_i = (end_i == 0 ? -1 : end_i);
-    end_j = (end_j == 0 ? -1 : end_j);
-    
 
+    for (int i = begin_i; i > end_i; i--)
+    {
+        for (int j = begin_j; j > end_j; j--)
+        {
+            if (j == begin_j)
+                min = computeCost(ctx, i, j, tmp[i], true);
+            else
+                min = computeCost(ctx, i, j, 0, false);
+            ctx.memoA[i + 1] = ctx.memoB[j];
+            ctx.memoB[j] = min;
+        }
+        tmp[i] = min;
+    }
 }
 
 /**
@@ -116,23 +127,27 @@ void computeBlock(struct NW_MemoIter ctx, int begin_i, int end_i, int begin_j, i
  * @param end_j the ending sequence index in the sequence Y
  */
 
-void EditDistance_NW_Rec_CO(struct NW_MemoIter ctx, int begin_i, int end_i, int begin_j, int end_j)
+void EditDistance_NW_Rec_CO(struct NW_MemoIter ctx, long *tmp, int begin_i, int end_i, int begin_j, int end_j)
 {
     int ni = begin_i - end_i, nj = begin_j - end_j;
 
     if ((ni <= S) && (nj <= S))
-        computeBlock(ctx, begin_i, end_i, begin_j, end_j);
+    {
+        end_i = (end_i == 0 ? -1 : end_i);
+        end_j = (end_j == 0 ? -1 : end_j);
+        computeBlock(ctx, tmp, begin_i, end_i, begin_j, end_j);
+    }
     else
     {
         if (ni > nj)
         {
-            EditDistance_NW_Rec_CO(ctx, begin_i, begin_i / 2, begin_j, end_j);
-            EditDistance_NW_Rec_CO(ctx, begin_i / 2, end_i, begin_j, end_j);
+            EditDistance_NW_Rec_CO(ctx, tmp, begin_i, (begin_i + end_i) / 2, begin_j, end_j);
+            EditDistance_NW_Rec_CO(ctx, tmp, (begin_i + end_i) / 2, end_i, begin_j, end_j);
         }
         else
         {
-            EditDistance_NW_Rec_CO(ctx, begin_i, end_i, begin_j, begin_j / 2);
-            EditDistance_NW_Rec_CO(ctx, begin_i, end_i, begin_j / 2, end_j);
+            EditDistance_NW_Rec_CO(ctx, tmp, begin_i, end_i, begin_j, (begin_j + end_j) / 2);
+            EditDistance_NW_Rec_CO(ctx, tmp, begin_i, end_i, (begin_j  + end_j)/ 2, end_j);
         }
     }
 }
@@ -153,7 +168,7 @@ long EditDistance_NW_CO(char *A, size_t lengthA, char *B, size_t lengthB)
     _init_base_match();
 
     char Xi, Yj;
-    long res;
+    long res, *tmp;
     size_t M, N;
     struct NW_MemoIter ctx = initSequences(A, lengthA, B, lengthB);
 
@@ -161,9 +176,11 @@ long EditDistance_NW_CO(char *A, size_t lengthA, char *B, size_t lengthB)
     N = ctx.N;
 
     ctx.memoA = malloc((M + 1) * sizeof(long));
-    if (ctx.memoA == NULL) { perror("EditDistance_NW_CA: malloc of memoA failed!\n"); exit(EXIT_FAILURE); }
+    if (ctx.memoA == NULL) { perror("EditDistance_NW_CO: malloc of memoA failed!\n"); exit(EXIT_FAILURE); }
     ctx.memoB = malloc((N + 1) * sizeof(long));
-    if (ctx.memoA == NULL) { perror("EditDistance_NW_CA: malloc of memoB failed!\n"); exit(EXIT_FAILURE); }
+    if (ctx.memoA == NULL) { perror("EditDistance_NW_CO: malloc of memoB failed!\n"); exit(EXIT_FAILURE); }
+    tmp = malloc((M + 1) * sizeof(long));
+    if (tmp == NULL) { perror("EditDistance_NW_CO: malloc of tmp\n"); exit(EXIT_FAILURE); }
 
 
     ctx.memoA[M] = 0;
@@ -172,6 +189,7 @@ long EditDistance_NW_CO(char *A, size_t lengthA, char *B, size_t lengthB)
     {
         Xi = ctx.X[i];
         ctx.memoA[i] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoA[i + 1];
+        tmp[i] = ctx.memoA[i];
     }
     for (int j = N - 1; j >= 0; j--)
     {
@@ -179,7 +197,7 @@ long EditDistance_NW_CO(char *A, size_t lengthA, char *B, size_t lengthB)
         ctx.memoB[j] = ((isBase(Yj) ? INSERTION_COST : 0)) + ctx.memoB[j + 1];
     }
 
-    EditDistance_NW_Rec_CO(ctx, M - 1, 0, N - 1, 0);
+    EditDistance_NW_Rec_CO(ctx, tmp, M - 1, 0, N - 1, 0);
     res = ctx.memoB[0];
     free(ctx.memoB);
     free(ctx.memoA);

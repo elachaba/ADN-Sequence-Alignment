@@ -58,6 +58,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp, bool useTmp)
 
 }
 
+
 /**
  * initSequence - initialises the the sequences X and Y
  * The sequence X is always longer the the sequence Y
@@ -130,10 +131,9 @@ long EditDistance_NW_CA(char *A, size_t lengthA, char *B, size_t lengthB)
     _init_base_match();
 
     char Xi, Yj;
-    long res;
+    long res, *tmp;
     size_t M, N;
     int end_i, end_j;
-    long *tmp;
     struct NW_MemoIter ctx = initSequences(A, lengthA, B, lengthB);
 
     M = ctx.M;
@@ -171,7 +171,6 @@ long EditDistance_NW_CA(char *A, size_t lengthA, char *B, size_t lengthB)
     res = ctx.memoB[0];
     free(ctx.memoB);
     free(ctx.memoA);
-    free(tmp);
 
     return (res);
 }

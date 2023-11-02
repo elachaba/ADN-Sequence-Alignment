@@ -33,6 +33,6 @@ struct NW_MemoIter
     char *Y ; /*!< the shortest genetic sequences */
     size_t M; /*!< length of X */
     size_t N; /*!< length of Y,  N <= M */
-    long *memoA; /*!< memoization table to store ph(i, N) */
     long *memoB; /*!<memoization table to store phi(M, j) */
+    long *memoA; /*!< memoization table to store ph(i, N) */
 } ;
