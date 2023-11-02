@@ -134,41 +134,11 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
     {
         tmp = ctx.memoB[N];
         /*ctx.memoB[N] = ctx.memoA[i];*/
-        for (int j = N; j >= 0; j--)
+        Xi = ctx.X[i];
+        ctx.memoB[N] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoB[N];
+        for (int j = N - 1; j >= 0; j--)
         {
-            if (j   == N)
-            {
-                Xi = ctx.X[i];
-                ctx.memoB[j] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoB[j];
-                continue;
-            }
-            Xi = ctx.X[i];
-            Yj = ctx.Y[j];
-            if (!isBase(Xi))  /* skip character in Xi that is not a base */
-            {
-                ManageBaseError( Xi );
-                /* phi(i + 1, j) */
-                res = ctx.memoB[j];
-            }
-            else if (! isBase(Yj))  /* skip ccharacter in Yj that is not a base */
-            {  ManageBaseError( Yj );
-                /* phi(i, j + 1) */
-                res = ctx.memoB[j + 1];
-            }
-            else
-            {  /* Note that stopping conditions (i==M) and (j==N) are already stored in c->memo (cf EditDistance_NW_Rec) */
-                min = /* initialization  with cas 1*/
-                        ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
-                                            : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
-                        )
-                        + /* ph(i + 1, j + 1) */ /*ctx.memoA[i + 1]*/ tmp;
-                { long cas2 = INSERTION_COST + ctx.memoB[j] ;
-                    if (cas2 < min) min = cas2 ;
-                }
-                { long cas3 = INSERTION_COST + ctx.memoB[j + 1] ;
-                    if (cas3 < min) min = cas3 ;
-                }
-            }
+            min = computeCost(ctx, i, j, tmp);
             tmp = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
             ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
         }

@@ -7,7 +7,7 @@
 
 #include "characters_to_base.h" /* mapping from char to base */
 
-#define S 254
+#define S 64
 
 
 
@@ -44,7 +44,7 @@ long computeCost(struct NW_MemoIter ctx, int i, int j)
                 ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
                                     : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
                 )
-                + /* ph(i + 1, j + 1) */ ctx.memoA[ctx.M];
+                + /* ph(i + 1, j + 1) */ ctx.memoA[i + 1];
         { long cas2 = INSERTION_COST + ctx.memoB[j] ;
             if (cas2 < min) min = cas2 ;
         }
@@ -100,20 +100,10 @@ struct NW_MemoIter initSequences(char *A, size_t lengthA, char *B, size_t length
 void computeBlock(struct NW_MemoIter ctx, int begin_i, int end_i, int begin_j, int end_j)
 {
     long min;
-    if (end_i == 0)
-        end_i = -1;
-    if (end_j == 0)
-        end_j = -1;
-    for (int i = begin_i; i > end_i; i--)
-    {
-        for (int j = begin_j; j > end_j; j--)
-        {
-            min = computeCost(ctx, i, j);
-            ctx.memoA[ctx.M] = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
-            ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
-        }
-        ctx.memoA[i] = ctx.memoB[end_j + 1];
-    }
+    end_i = (end_i == 0 ? -1 : end_i);
+    end_j = (end_j == 0 ? -1 : end_j);
+    
+
 }
 
 /**

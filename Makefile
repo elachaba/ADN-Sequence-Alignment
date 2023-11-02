@@ -12,7 +12,7 @@ BINDIR=$(REFDIR)/bin
 DOCDIR=$(REFDIR)/doc
 TESTDIR=$(REFDIR)/tests
 REPORTDIR=$(REFDIR)/report
-CURRTEST = Needleman-Wunsch-CO.o
+CURRTEST = Needleman-Wunsch-itermemo.o
 
 LATEXSOURCE=$(wildcard $(REPORTDIR)/*.tex)
 CSOURCE=$(wildcard $(SRCDIR)/*.c)
@@ -45,7 +45,7 @@ $(BINDIR)/Needleman-Wunsch-CA.o: $(SRCDIR)/Needleman-Wunsch-CA.h $(SRCDIR)/Needl
 	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-CA.o $(SRCDIR)/Needleman-Wunsch-CA.c
 
 $(BINDIR)/Needleman-Wunsch-CO.o: $(SRCDIR)/Needleman-Wunsch-CO.h $(SRCDIR)/Needleman-Wunsch-CO.c $(SRCDIR)/characters_to_base.h
-	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-CO.o $(SRCDIR)/Needleman-Wunsch-CO.c
+	$(CC) $(OPT) -I$(SRCDIR) -c -g -o $(BINDIR)/Needleman-Wunsch-CO.o $(SRCDIR)/Needleman-Wunsch-CO.c
 
 $(BINDIR)/extract-fasta-sequences-size: $(SRCDIR)/extract-fasta-sequences-size.c
 	$(CC) $(OPT) -I$(SRCDIR) -o $(BINDIR)/extract-fasta-sequences-size $(SRCDIR)/extract-fasta-sequences-size.c
