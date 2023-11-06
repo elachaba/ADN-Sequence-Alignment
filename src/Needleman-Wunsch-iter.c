@@ -1,9 +1,7 @@
-
-#include "Needleman-Wunsch-itermemo.h"
+#include "Needleman-Wunsch-iter.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> /* for strchr */
-// #include <ctype.h> /* for toupper */
 
 #include "characters_to_base.h" /* mapping from char to base */
 
@@ -15,6 +13,7 @@
  * @param ctx holds the information about the sequences
  * @param i  the index of the character in sequence X
  * @param j the index of the character in the sequence Y
+ * @param tmp the value of phi(i+1,j+1)
  * @return The cost of aligning Xi and Yj
  */
 
@@ -29,12 +28,12 @@ long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp)
     {
         ManageBaseError( Xi );
         /* phi(i + 1, j) */
-        res = ctx.memoB[j];
+        res = ctx.slidingCol[j];
     }
     else if (! isBase(Yj))  /* skip ccharacter in Yj that is not a base */
     {  ManageBaseError( Yj );
         /* phi(i, j + 1) */
-        res = ctx.memoB[j + 1];
+        res = ctx.slidingCol[j + 1];
     }
     else
     {  /* Note that stopping conditions (i==M) and (j==N) are already stored in c->memo (cf EditDistance_NW_Rec) */
@@ -42,11 +41,11 @@ long computeCost(struct NW_MemoIter ctx, int i, int j, long tmp)
                 ( isUnknownBase(Xi) ?  SUBSTITUTION_UNKNOWN_COST
                                     : ( isSameBase(Xi, Yj) ? 0 : SUBSTITUTION_COST )
                 )
-                + /* ph(i + 1, j + 1) */ /*ctx.memoA[i + 1]*/ tmp;
-        { long cas2 = INSERTION_COST + ctx.memoB[j] ;
+                + /* ph(i + 1, j + 1) */ tmp;
+        { long cas2 = INSERTION_COST + ctx.slidingCol[j] ;
             if (cas2 < min) min = cas2 ;
         }
-        { long cas3 = INSERTION_COST + ctx.memoB[j + 1] ;
+        { long cas3 = INSERTION_COST + ctx.slidingCol[j + 1] ;
             if (cas3 < min) min = cas3 ;
         }
         res = min ;
@@ -71,13 +70,15 @@ struct NW_MemoIter initSequences(char *A, size_t lengthA, char *B, size_t length
 {
     struct NW_MemoIter ctx;
     if (lengthA >= lengthB)
-    {  ctx.X = A ;
+    {
+        ctx.X = A ;
         ctx.M = lengthA ;
         ctx.Y = B ;
         ctx.N = lengthB ;
     }
     else
-    {  ctx.X = B ;
+    {
+        ctx.X = B ;
         ctx.M = lengthB ;
         ctx.Y = A ;
         ctx.N = lengthA ;
@@ -101,7 +102,7 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
 
     /* We define the variables to use in the function */
     char Xi, Yj; /* To store characters from the sequence x (resp. Y) */
-    long res, min, tmp; /* To store final result */
+    long res, min, tmp; /* To help computing and storing the final result */
     size_t M, N; /* M (resp. N) is the size of X (resp. Y) */
 
     /* We initiate the X and Y sequences,
@@ -109,43 +110,43 @@ long EditDistance_NW_Iter(char *A, size_t lengthA, char *B, size_t lengthB)
      */
 
     struct NW_MemoIter ctx = initSequences(A, lengthA, B, lengthB);
-
     M = ctx.M ;
     N = ctx.N ;
 
-    /* memoA will be used to store the lines calculated from the phi matrix */
+    /*  Allocation and initialization of the sliding column */
+    ctx.slidingCol = malloc((N + 1) * sizeof(long));
+    if (ctx.slidingCol == NULL) { perror("EditDistance_NW_Iter: malloc of ctx_memB" ); exit(EXIT_FAILURE); }
 
-    ctx.memoB = malloc((N + 1) * sizeof(long));
-    if (ctx.memoB == NULL) { perror("EditDistance_NW_Iter: malloc of ctx_memB" ); exit(EXIT_FAILURE); }
-
-    ctx.memoB[N] = 0;
-
+    ctx.slidingCol[N] = 0;
     for (int j = N - 1; j >= 0; j--)
     {
-
         Yj = ctx.Y[j];
-        ctx.memoB[j] = (isBase(Yj) ? INSERTION_COST : 0) + ctx.memoB[j + 1];
+        ctx.slidingCol[j] = (isBase(Yj) ? INSERTION_COST : 0) + ctx.slidingCol[j + 1];
     }
 
-    /* We proceed by computing columns, and storing the new column in the last one
-     * only the last updated column is needed to create the next column, which costs only O(n).
+    /* We proceed by computing columns, and overwriting the previous one
+     * only the last updated column is needed to create the next column, which costs only O(N) in term of memory.
      */
     for (int i = M - 1; i >= 0; i--)
     {
-        tmp = ctx.memoB[N];
-        /*ctx.memoB[N] = ctx.memoA[i];*/
+        /* Compute phi(i,N) after storing the existing value in tmp */
+        tmp = ctx.slidingCol[N];
         Xi = ctx.X[i];
-        ctx.memoB[N] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.memoB[N];
+        ctx.slidingCol[N] = (isBase(Xi) ? INSERTION_COST : 0) + ctx.slidingCol[N];
+        /* Compute the current column */
         for (int j = N - 1; j >= 0; j--)
         {
             min = computeCost(ctx, i, j, tmp);
-            tmp = ctx.memoB[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
-            ctx.memoB[j] = min; /* Update the value in the column, new phi(i, j) */
+            tmp = ctx.slidingCol[j]; /* Update the value of phi(i + 1, j + 1), i is fixed. */
+            ctx.slidingCol[j] = min; /* Update the value in the column, new phi(i, j) */
         }
     }
 
-    res = ctx.memoB[0];
-    free(ctx.memoB);
+    /* Load phi(0,0) */
+    res = ctx.slidingCol[0];
+
+    /* Deallocation of ctx.slidingCol */
+    free(ctx.slidingCol);
 
     return res;
 }

@@ -38,8 +38,8 @@ $(BINDIR)/distanceEdition: $(SRCDIR)/distanceEdition.c $(BINDIR)/$(CURRTEST)
 $(BINDIR)/Needleman-Wunsch-recmemo.o: $(SRCDIR)/Needleman-Wunsch-recmemo.h $(SRCDIR)/Needleman-Wunsch-recmemo.c $(SRCDIR)/characters_to_base.h
 	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-recmemo.o $(SRCDIR)/Needleman-Wunsch-recmemo.c
 
-$(BINDIR)/Needleman-Wunsch-itermemo.o: $(SRCDIR)/Needleman-Wunsch-itermemo.h $(SRCDIR)/Needleman-Wunsch-itermemo.c $(SRCDIR)/characters_to_base.h
-	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-itermemo.o $(SRCDIR)/Needleman-Wunsch-itermemo.c
+$(BINDIR)/Needleman-Wunsch-iter.o: $(SRCDIR)/Needleman-Wunsch-iter.h $(SRCDIR)/Needleman-Wunsch-iter.c $(SRCDIR)/characters_to_base.h
+	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-iter.o $(SRCDIR)/Needleman-Wunsch-iter.c
 
 $(BINDIR)/Needleman-Wunsch-CA.o: $(SRCDIR)/Needleman-Wunsch-CA.h $(SRCDIR)/Needleman-Wunsch-CA.c $(SRCDIR)/characters_to_base.h
 	$(CC) $(OPT) -I$(SRCDIR) -c  -o $(BINDIR)/Needleman-Wunsch-CA.o $(SRCDIR)/Needleman-Wunsch-CA.c

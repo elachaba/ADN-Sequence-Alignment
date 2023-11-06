@@ -1,1 +1,29 @@
-CMakeLists.txt not found in /home/elachaba/2A/Semester_1/AOD/tp-ADN-distance Select CMakeLists.txt
+/snap/clion/250/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /home/elachaba/2A/Semester_1/AOD/ADN-Sequence-Alignment -B /home/elachaba/2A/Semester_1/AOD/ADN-Sequence-Alignment/cmake-build-debug
+-- Configuring done (0.0s)
+CMake Error at CMakeLists.txt:22 (add_executable):
+  Cannot find source file:
+
+    /home/elachaba/2A/Semester_1/AOD/ADN-Sequence-Alignment/bin/extract-fasta-sequences-size
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm .h
+  .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90 .f95 .f03 .hip .ispc
+
+
+CMake Error at CMakeLists.txt:36 (add_executable):
+  Cannot find source file:
+
+    /home/elachaba/2A/Semester_1/AOD/ADN-Sequence-Alignment/src/needleman-wunsch-main.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm .h
+  .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90 .f95 .f03 .hip .ispc
+
+
+CMake Error at CMakeLists.txt:22 (add_executable):
+  No SOURCES given to target: extract-fasta-sequences-size
+
+
+CMake Error at CMakeLists.txt:36 (add_executable):
+  No SOURCES given to target: needleman-wunsch
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.

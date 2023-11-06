@@ -57,7 +57,7 @@ EXAMPLE
 #include <sys/stat.h> /* for file length */
 
 #ifdef __PERF_MESURE__
-  #include "/home/elachaba/2A/Semester_1/AOD/tp-ADN-distance/srcperf/perfMesure.c"
+  #include "/home/elachaba/2A/Semester_1/AOD/ADN-Sequence-Alignment/srcperf/perfMesure.c"
 #endif
 
 /******************************************************************************/
