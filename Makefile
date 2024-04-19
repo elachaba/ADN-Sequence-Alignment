@@ -12,7 +12,7 @@ BINDIR=$(REFDIR)/bin
 DOCDIR=$(REFDIR)/doc
 TESTDIR=$(REFDIR)/tests
 REPORTDIR=$(REFDIR)/report
-CURRTEST = Needleman-Wunsch-CO.o
+CURRTEST = Needleman-Wunsch-iter.o
 
 LATEXSOURCE=$(wildcard $(REPORTDIR)/*.tex)
 CSOURCE=$(wildcard $(SRCDIR)/*.c)

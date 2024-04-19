@@ -2,7 +2,7 @@
 
 \usepackage[utf8]{inputenc}
 
-%\usepackage[T1]{fontenc}
+\usepackage[T1]{fontenc}
 \usepackage{enumerate}
 \usepackage{color}
 
@@ -13,7 +13,7 @@
 \textheight 28.0cm
 \topmargin -3.0cm
 
-%   \textwidth 18cm
+   %\textwidth 18cm
    %\oddsidemargin -1.5cm
    %\evensidemargin -1.5cm
    %\textheight 26.0cm
@@ -61,65 +61,117 @@ Analyse du coût théorique de ce  programme en fonction de $N$ et $M$  en notat
   }
   \item travail (nombre d'opérations) : \\
   \textcolor{blue}{
-    Boucle d'initialisation : $O(M)$ \\
+    Boucle d'initialisation : $O(N)$ \\
     Boucle Principale       : $O(MN)$  \\
     En total, on est à $O(MN)$ en terme d'opérations.
   }
   \item nombre de défauts de cache obligatoires (sur modèle CO, y compris sur $X$ et $Y$): \\
   \textcolor{blue}{
     Si Z est suffisement grand, le nombre de défauts de cache est : \\
-    - Initialisation de memoB : M/L \\
-    - nb de miss sur X : M/L, nb de miss sur Y : N/L \\
-    - nb de miss sur memoB dans la Boucle: 0 (toujours dans le cache) \\
-    -- En total :  $\frac{2M + N}{L} + O(1)$
+    - Initialisation de slidingCol : $\frac{2N}{L}$ \\
+    - nb de miss sur X : $\frac{M}{L}$, nb de miss sur Y : $O(1)$ (toujours dans le cache) \\
+    - nb de miss sur slidingCol dans la Boucle: $O(1)$ (toujours dans le cache) \\
+    -- En total :  $\frac{M + 2N}{L} + O(1)$
   }
   \item nombre de défauts de cache si $Z \ll \min(N,M)$ : \\
   \textcolor{blue}{
     Si Z $\ll \min(N,M) = N$, le nombre de défauts de cache est : \\
-    - Initialisation de memoB : M/L \\
-    - nb de miss sur X : M, nb de miss sur Y : $\frac{M N}{L}$ \\
-    - nb de miss sur memoB dans la Boucle: $\frac{M N}{L}$ (toujours dans le cache) \\
-    -- En total :  $M + \frac{2MN + M}{L} + O(1)$
+    - Initialisation de slidingCol : $\frac{2N}{L}$ \\
+    - nb de miss sur X : $M + O(1)$, nb de miss sur Y : $\frac{M N}{L}$ \\
+    - nb de miss sur slidingCol dans la Boucle: $\frac{M N}{L}$\\
+    -- En total :  $M + 2 \frac{MN + N}{L} + O(1)$
   }
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%
 \section{Programme cache aware  (3 points)}
 {\em Expliquer très brièvement (2 à 5 lignes max) le principe de votre code, la mémoire utilisée, le sens de parcours des tableaux.}
-\vspace*{1.0cm}
+% \vspace*{1.0cm}
+\textcolor{blue}{
+Afin de calculer $\varphi (0,0)$ en minimiseant les défaults de cache, notre programme calcule les valeurs d'un bloc carré de taille $K^{2}$ (choisi pour garantir qu'un block tient dans le cache) de la matrice.
+Mais on ne stocke que la valeur des colonnes dans un tableau de taille $O(N)$ en écrasant les valeurs inutiles. Pour garantir qu'il n'y a pas perte d'information, on stocke les éléments nécessaire pour le calcul du block suivant dans deux tableau: tmp de taille $K$ et memLine de taille $O(M)$.
+}
 
-Analyse du coût théorique de ce  programme en fonction de $N$ et $M$  en notation $\Theta(...)$ 
 \begin{enumerate}
-  \item place mémoire (ne pas compter les 2 séquences initiales $X$ et $Y$ en mémoire via {\tt mmap}) : 
-  \item travail (nombre d'opérations) : 
-  \item nombre de défauts de cache obligatoires (sur modèle CO, y compris sur $X$ et $Y$):
-  \item nombre de défauts de cache si $Z \ll \min(N,M)$ : 
+  \item place mémoire allouée (ne pas compter les 2 séquences $X$ et $Y$ en mémoire via {\tt mmap}) : \\
+  \textcolor{blue}{
+    Espace mémoire alloué : $O(M+N+K)$ où K est la taille d'un bloc.
+  }
+  \item travail (nombre d'opérations) : \\
+  \textcolor{blue}{
+    Boucle d'initialisation : $O(N + M)$ \\
+    Boucle Principale       : $O(\frac{MN}{K^{2}} K^{2}) = O(MN)$  \\
+    En total, on est à $O(MN)$ en terme d'opérations.
+  }
+  \item nombre de défauts de cache obligatoires (sur modèle CO, y compris sur $X$ et $Y$): \\
+  \textcolor{blue}{
+    Si Z est suffisement grand, le nombre de défauts de cache est : \\
+    - Initialisation de slidingCol et memoLine: $2 \frac{N+M}{L}$ \\
+    - nb de miss sur X : $O(1)$ (toujours dans le cache), nb de miss sur Y : $O(1)$ (toujours dans le cache) \\
+    - nb de miss sur tmp dans la Boucle: $\frac{K}{L}$ \\
+    -- En total :  $2 \frac{M + N}{L} + \frac{K}{L} + O(1)$
+  }
+  \item nombre de défauts de cache si $Z \ll \min(N,M)$ : \\
+  \textcolor{blue}{
+    Si Z $\ll \min(N,M) = N$, le nombre de défauts de cache est : \\
+    - Initialisation de slidingCol et memoLine: $2 \frac{N+M}{L}$ \\
+    - nb de miss sur X et memoLine dans la boucle : $\frac{MN}{K^{2}} . \frac{K}{L}$ \\
+    - nb de miss sur Y et slidingCol dans la boucle : $\frac{MN}{K^{2}} . \frac{K^{2}}{L}$  \\
+    - nb de miss sur tmp dans la boucle : $2 \frac{MN}{K^{2}} . \frac{K}{L}$ \\
+    -- En total :  $2 \frac{M + N}{L} + 2 \frac{MN}{L} . (1 + \frac{2}{K}) + O(1)$ \\
+    On cherchera donc à maximiser $K$ de sorte qu'un bloc de taille $K^{2}$ tienne en mémoire, d'où le choix $K = \sqrt{Z} - O(1)$
+  }
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%
 \section{Programme cache oblivious  (3 points)}
 {\em Expliquer très brièvement (2 à 5 lignes max) le principe de votre code, la mémoire utilisée, le sens de parcours des tableaux.}
-\vspace*{1.0cm}
+% \vspace*{1.0cm}
+\textcolor{blue}{Notre programme découpe le problème récursivement jusqu'à ce que la taille du block à calculer soit inférieure à un seuil $S$ et applique le traitement itératif. $S$ est choisi pour eviter un débordement de mémoire (Stack Overflow) et pour garantir que le block à traiter tient dans le cache
+Nous stockons les éléments des colonnes calculés dans un tableau de taille $O(N)$ en écrasant les valeurs inutiles. Les valeurs necessaires pour le calcul des blocks pendant le remontée recursive sont stockés dans deux tableaux de taille $O(M)$ chacun.
+}
 
-Analyse du coût théorique de ce  programme en fonction de $N$ et $M$  en notation $\Theta(...)$ )
+
+Analyse du coût théorique de ce  programme en fonction de $N$ et $M$  en notation $\Theta(...)$
 \begin{enumerate}
-  \item place mémoire (ne pas compter les 2 séquences initiales $X$ et $Y$ en mémoire via {\tt mmap}) : 
-  \item travail (nombre d'opérations) : 
-  \item nombre de défauts de cache obligatoires (sur modèle CO, y compris sur $X$ et $Y$):
-  \item nombre de défauts de cache si $Z \ll \min(N,M)$ : 
+  \item place mémoire allouée (ne pas compter les 2 séquences $X$ et $Y$ en mémoire via {\tt mmap}) : \\
+  \textcolor{blue}{
+    Espace mémoire alloué : $O(2M + N)$.
+  }
+  \item travail (nombre d'opérations) : \\
+  \textcolor{blue}{
+    Boucle d'initialisation : $O(N + M)$ \\
+    Boucle Principale       : $O(\frac{MN}{K^{2}} K^{2}) = O(MN)$  \\
+    En total, on est à $O(MN)$ en terme d'opérations.
+  }
+  \item nombre de défauts de cache obligatoires (sur modèle CO, y compris sur $X$ et $Y$): \\
+  \textcolor{blue}{
+    Si Z est suffisement grand, le nombre de défauts de cache est : \\
+    -- En total :  $ \frac{3M + 2N}{L} + O(1)$
+  }
+  \item nombre de défauts de cache si $Z \ll \min(N,M)$ : \\
+  \textcolor{blue}{
+  	Lorsque on franchit le seuil \(S\), le nombre de défauts du programme itératif est de l'ordre de $O\left(\frac{2S}{L} + \frac{2S^2}{L}\right)$. Au pire des cas, le nombre de blocs sera de l'ordre de $O\left(\log\left(\frac{M}{S}\right)\right)$.
+  	Au total, donc $Q(M, N, L, Z)$ lorsque $Z \ll \min(M, N) = N$ est : $O\left(\log\left(\frac{M}{S}\right) \cdot \frac{S^2}{L}\right)$.
+    }
 \end{enumerate}
 
 \section{Réglage du seuil d'arrêt récursif du programme cache oblivious  (1 point)} 
 Comment faites-vous sur une machine donnée pour choisir ce seuil d'arrêt? Quelle valeur avez vous choisi pour les
 PC de l'Ensimag? (2 à 3 lignes) 
+\textcolor{blue}{
+  On choisit le seuil d'arrêt dans l'algorithme cache-oblivious empiriquement.
+  Il représente le point où l'algorithme cesse de diviser le problème en sous-problèmes plus petits et bascule vers un algorithme itératif de base.
+  Pour les PC de l'Ensimag, nous avons pris S = 200
+}
 
 %%%%%%%%%%%%%%%%%%%
 \section{Expérimentation (7 points)}
 
-Description de la machine d'expérimentation:  \\
-Processeur: A PRECISER  --
-Mémoire: A PRECISER --
-Système: A PRECISER 
+Description de la machine d'expérimentation:    \textcolor{blue}{ *ENSIPC306*\\
+Processeur: Intel(R) Core(TM) i5-10500 CPU @ 3.10GHz --
+Mémoire: 32GiB --
+Système: 22.04.1-Ubuntu }
 
 \subsection{(3 points) Avec {\tt 
 	valgrind --tool =cachegrind --D1=4096,4,64
@@ -129,125 +181,63 @@ Système: A PRECISER
 \end{verbatim}
 en prenant pour $N$ et $M$ les valeurs dans le tableau ci-dessous.
 
-
-Les paramètres du cache LL de second niveau est : ...
-{\em mettre ici les paramètres: soit ceux indiqués ligne 3
-du fichier cachegrind.out.(pid) généré par valgrind: soit ceux par défaut,
-soit ceux que vous avez spécifiés à la main
-\footnote{par exemple:
-{\tt valgrind --tool=cachegrind --D1=4096,4,64 --LL=65536,16,256  ... }
-mais ce n'est pas demandé car cela allonge le temps de simulation. } 
- pour LL. }
+Les paramètres du cache LL de second niveau est :   \textcolor{blue}{12582912 B, 64 B, 24-way associative} \\
 
 {\em Le tableau ci-dessous est un exemple,  complété avec vos résultats et 
 ensuite analysé.}
 \\
 {\footnotesize
+% Première partie du tableau avec 'récursif mémo' et 'itératif'
+\begin{tabular}{|r|r||r|r|r||r|r|r||}
+\hline
+ \multicolumn{2}{|c||}{ } & \multicolumn{3}{c||}{récursif mémo} & \multicolumn{3}{c||}{itératif} \\
+\hline
+N & M & \#Irefs & \#Drefs & \#D1miss & \#Irefs & \#Drefs & \#D1miss \\
+\hline
+1000 & 1000 & 217,185,326 & 122,119,390 & 4,935,698 & 117,682,603 & 69,099,897 & 150,823 \\
+2000 & 1000 & 433,362,720 & 243,398,622 & 11,044,306 & 234,419,435 & 137,401,125 & 296,405 \\
+4000 & 1000 & 867,134,818 & 487,362,878 & 23,270,011 & 469,294,537 & 275,405,199 & 587,611 \\
+2000 & 2000 & 867,126,190 & 487,885,543 & 19,939,882 & 470,136,235 & 276,268,970 & 583,611 \\
+4000 & 4000 & 3,465,848,903 & 1,950,545,738 & 80,217,738 & 1,879,916,371 & 1,104,986,826 & 2,306,764 \\
+6000 & 6000 & 7,796,309,365 & 4,387,981,549 & 180,809,120 & 4,229,527,314 & 2,486,211,263 & 5,174,114 \\
+8000 & 8000 & 13,857,938,912 & 7,799,945,120 & 322,132,951 & 7,518,771,848 & 4,419,745,069 & 9,183,090 \\
+\hline
+\end{tabular}
 
-\begin{tabular}{|r|r||r|r|r||r|r|r||r|r|r||r|r|r||}
+\vspace{2mm} % Ajout d'un petit espace entre les deux tableaux
+
+% Deuxième partie du tableau avec 'cache aware' et 'cache oblivious'
+\begin{tabular}{|r|r||r|r|r||r|r|r||}
 \hline
- \multicolumn{2}{|c||}{ } 
-& \multicolumn{3}{c||}{récursif mémo}
-& \multicolumn{3}{c||}{itératif}
-& \multicolumn{3}{c||}{cache aware}
-& \multicolumn{3}{c||}{cache oblivious}
-\\ \hline
-N & M 
-& \#Irefs & \#Drefs & \#D1miss % recursif memoisation
-& \#Irefs & \#Drefs & \#D1miss % itératif
-& \#Irefs & \#Drefs & \#D1miss % cache aware
-& \#Irefs & \#Drefs & \#D1miss % cache oblivious
-\\ \hline
+ \multicolumn{2}{|c||}{ } & \multicolumn{3}{c||}{cache aware} & \multicolumn{3}{c||}{cache oblivious} \\
 \hline
-1000 & 1000 
-&217,185,326  &122,119,390  &4,934,154   % recursif memoisation
-&117,682,603  &69,099,897  &150,823   % itératif
-&137,962,533  &77,267,636  &9,887   % cache aware
-&  &  &   % cache oblivious
-\\ \hline
-1000 & 1000 
-& 217,185,326  & 122,119,390  & 4,935,698   % recursif memoisation
-& 117,682,603  & 69,099,897  & 150,823   % itératif
-& 137,962,533  & 77,267,636  & 9,887   % cache aware
-&  &  &   % cache oblivious
-\\ \hline
-2000 & 1000 
-& 433,362,720  & 243,398,622  & 11,044,306   % recursif memoisation
-& 234,419,435  & 137,401,125  & 296,405   % itératif
-& 274,978,523  & 153,736,353  & 15,801   % cache aware
-&  &  &   % cache oblivious
-\\ \hline
-4000 & 1000 
-& 867,134,818  & 487,362,878  & 23,270,011   % recursif memoisation
-& 469,294,537  & 275,405,199  & 587,611   % itératif
-& 550,411,130  & 308,074,800  & 20,077   % cache aware
-&  &  &   % cache oblivious
-\\ \hline
-2000 & 2000 
-& 867,126,190  & 487,885,543  & 19,939,882   % recursif memoisation
-& 470,136,235  & 276,268,970  & 583,611   % itératif
-& 551,229,013  & 308,932,822  & 27,273    % cache aware
-&  &  &   % cache oblivious
-\\ \hline
-4000 & 4000
-& 3,465,848,903  & 1,950,545,738  & 80,217,738   % recursif memoisation
-& 1,879,916,371  & 1,104,986,826  & 2,306,764   % itératif
-& 2,204,117,335  & 1,235,567,952  & 67,808   % cache aware
-&  &  &   % cache oblivious
-\\ \hline
-6000 & 6000 
-& 7,796,309,365  & 4,387,981,549  & 180,809,120   % recursif memoisation
-& 4,229,527,314  & 2,486,211,263  & 5,174,114   % itératif
-& 4,958,852,729 & 2,779,963,390 & 134,752  % cache aware
-&  &  &   % cache oblivious
-\\ \hline
-8000 & 8000
-& 13,857,938,912  & 7,799,945,120  & 322,132,951   % recursif memoisation
-& 7,518,771,848  & 4,419,745,069  & 9,183,090   % itératif
-& 8,815,237,966  & 4,941,921,914  & 358,866   % cache aware
-&  &  &   % cache oblivious
-\\ \hline
+N & M & \#Irefs & \#Drefs & \#D1miss & \#Irefs & \#Drefs & \#D1miss \\
+\hline
+1000 & 1000 & 137,962,533 & 77,267,636 & 9,887 & 137,645,143 & 77,132,617 & 18,724 \\
+2000 & 1000 & 274,978,523 & 153,736,353 & 15,801 & 274,343,515 & 153,466,311 & 26,266 \\
+4000 & 1000 & 550,411,130 & 308,074,800 & 20,077 & 549,141,621 & 307,535,313 & 30,769 \\
+2000 & 2000 & 551,229,013 & 308,932,822 & 27,273 & 549,977,314 & 308,401,076 & 23,563 \\
+4000 & 4000 & 2,204,117,335 & 1,235,567,952 & 67,808 & 2,199,265,473 & 1,233,518,484 & 65,105 \\
+6000 & 6000 & 4,958,852,729 & 2,779,963,390 & 134,752 & 4,946,142,756 & 2,774,118,683 & 242,628 \\
+8000 & 8000 & 8,815,237,966 & 4,941,921,914 & 358,866 & 8,796,141,389 &  4,933,879,097 & 257,432 \\
 \hline
 \end{tabular}
 }
 
 \paragraph{Important: analyse expérimentale:} 
-ces mesures expérimentales sont elles en accord avec les coûts analysés théroiquement (justifier)  ? 
+ces mesures expérimentales sont elles en accord avec les coûts analysés théroiquement (justifier) ?
 Quel algorithme se comporte le mieux avec valgrind et 
-les paramètres proposés, pourquoi ?
+les paramètres proposés, pourquoi ? \\
+\textcolor{blue}{
+Les résultats empiriques montrent que le nombre de cache misses décroit énormément avec les nouvelles implémentations. Le programme cache oblivious est généralement le meilleur, puisqu'il est conçu de sorte qu'il soit optimal quelque soit le niveau de cache.
+}
 
-
-\subsection{(3 points) Sans valgrind, par exécution de la commande :}
+\subsection{(3 points) Sans valgrind}
+On mesure le temps écoulé, le temps CPU et l'énergie consommée avec : \\
 {\tt \begin{tabular}{llll}
-distanceEdition & GCA\_024498555.1\_ASM2449855v1\_genomic.fna & 77328790 & M \\
-                & GCF\_000001735.4\_TAIR10.1\_genomic.fna     & 30808129 & N
+distanceEdition-perf  & GCA\_024498555.1\_ASM2449855v1\_genomic.fna & 77328790 & M \\
+                      & GCF\_000001735.4\_TAIR10.1\_genomic.fna     & 30808129 & N
 \end{tabular}}
-
-On mesure le temps écoulé, le temps CPU et l'énergie consommée avec : {\em  [présicer ici comment vous avez fait la mesure:
-{\tt time} 
-ou {\tt /usr/bin/time}
-ou {\tt getimeofday}
-ou {\tt getrusage}
-% ou {\tt perfstart/perfstop\_and\_display}%
-% \footnote{
-%     cf {\tt /matieres/4MMAOD6/2023-10-TP-AOD-ADN-Docs-fournis/tp-ADN-distance/srcperf/0-LisezMoi}
-% }
-ou... \\
-L'énergie consommée sur le processeur peut être estimée en regardant le compteur RAPL d'énergie (en microJoule)
-pour chaque core avant et après l'exécution et en faisant la différence.
-Le compteur du core $K$ est dans le fichier 
-\verb+ /sys/class/powercap/intel-rapl/intel-rapl:K/energy_uj + .\\
-Par exemple, pour le c{\oe}ur 0: 
-\verb+ /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj +
-% Les fonctions fournies 
-% {\tt perfstart/perfstop\_and\_display} dans le répertoire
-% {\tt /matieres/4MMAOD6/2022-10-TP-AOD-ADN-Docs-fournis/tp-ADN-distance/srcperf} 
-% font ces mesures de temps cpu, ecoulé et énergie.
-% }
-
-Nota bene: pour avoir un résultat fiable/reproductible (si variailité), 
-il est préférable de faire chaque mesure 5 fois et de reporter l'intervalle
-de confiance [min, moyenne, max]. 
 
 \begin{tabular}{|r|r||r|r|r||r|r|r||r|r|r||}
 \hline
@@ -268,31 +258,32 @@ N & M
 \\ \hline
 \hline
 10000 & 10000 
-&  &  &   % itératif
-&  &  &   % cache aware
-&  &  &   % cache oblivious
+& 1.20799 & 1.20795 & 4.63446e-06 % itératif
+& 1.26864 & 1.26863 & 5.00099e-06 % cache aware
+& 1.28422 & 1.28364 & 5.32164e-06 % cache oblivious
 \\ \hline
 20000 & 20000 
-&  &  &   % itératif
-&  &  &   % cache aware
-&  &  &   % cache oblivious
+& 4.89200 & 4.89131 & 1.99841e-05 % itératif
+& 5.13932 & 5.13926 & 2.05629e-05 % cache aware
+& 5.17938 & 5.17575 & 2.07550e-05 % cache oblivious
 \\ \hline
 30000 & 30000 
-&  &  &   % itératif
-&  &  &   % cache aware
-&  &  &   % cache oblivious
+& 11.0281 & 11.0222 & 4.60374e-05 % itératif
+& 11.5283 & 11.5278 & 4.78964e-05 % cache aware
+& 11.6675 & 11.6637 & 4.87354e-05 % cache oblivious
 \\ \hline
 40000 & 40000 
-&  &  &   % itératif
-&  &  &   % cache aware
-&  &  &   % cache oblivious
+& 19.6529 & 19.6525 & 8.19819e-05 % itératif
+& 20.6400 & 20.6394 & 8.91589e-05 % cache aware
+& 20.8331 & 20.8282 & 8.76766e-05 % cache oblivious
 \\ \hline
 \hline
 \end{tabular}
 \paragraph{Important: analyse expérimentale:} 
 ces mesures expérimentales sont elles en accord avec les coûts analysés théroiquement (justifier)  ? 
-Quel algorithme se comporte le mieux avec valgrind et 
-les paramètres proposés, pourquoi ?
+\textcolor{blue}{
+Les résultats experiementaux montrent que les trois programmes sont à peu près équivalent en terme de travail. Certes, le nombre de cache misses est beaucoup plus inférieur pour les programmes cache aware et cache oblivious, mais on ajoute un coût d'opérations, et peut-être le compilateur optimise mieux le programme itératif.} \\
+ 
 
 \subsection{(1 point) Extrapolation: estimation de la durée et de l'énergie pour la commande :}
 {\tt \begin{tabular}{llll}
@@ -305,11 +296,12 @@ A partir des résultats précédents, le programme {\em préciser itératif/cach
 le plus performant pour la commande ci dessus (test 5); les ressources pour l'exécution seraient environ:
 {\em (préciser la méthode de calcul utilisée)} 
 \begin{itemize}
-\item Temps cpu (en s) : ...
-\item Energie  (en kWh) : ... .
+\item Temps cpu (en s) : 3500000
+\item Energie  (en kWh) : 17.5 .
 \end{itemize}
 Question subsidiaire: comment feriez-vous pour avoir un programme s'exécutant en moins de 1 minute ? 
 {\em donner le principe en moins d'une ligne, même 1 mot précis suffit! }
-
+\textcolor{blue}{Il faut essayer de prendre compte des dépendences entre les calculs et écrire un programme qui calcule les blocs en parallèle en applicant le principe du parallélisme.
+}
 
 \end{document}

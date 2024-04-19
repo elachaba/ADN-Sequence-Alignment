@@ -44,8 +44,7 @@ EXAMPLE
  * \brief Primitives pour mapper en mémoire virtuelle une sous-séquence d'un fichier de caractères
  */
 
-#include "Needleman-Wunsch-CO.h" // Recursive implementation of NeedlemanWunsch with memoization
-
+#include "Needleman-Wunsch-iter.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -57,7 +56,7 @@ EXAMPLE
 #include <sys/stat.h> /* for file length */
 
 #ifdef __PERF_MESURE__
-  #include "/home/elachaba/2A/Semester_1/AOD/ADN-Sequence-Alignment/srcperf/perfMesure.c"
+  #include "/matieres/4MMAOD6/2023-10-TP-AOD-ADN-Docs-fournis/tp-ADN-distance/srcperf/perfMesure.c"
 #endif
 
 /******************************************************************************/
@@ -188,7 +187,7 @@ int main(int argc, char *argv[])
    struct myperf p;
    perfstart(&p) ;
 #endif
-   long res = EditDistance_NW_CO(seq[0], length[0], seq[1], length[1]);
+   long res = EditDistance_NW_Iter(seq[0], length[0], seq[1], length[1]);
 #ifdef __PERF_MESURE__
    perfstop_and_display( stderr, &p ) ;
    // par exemple p.cumul_energy donne le nombre de kWh consommés sur le processeur entre l'appel à perf_start et celui à perfstop_and_display 
